@@ -1,3 +1,5 @@
+import fs from "fs";
+
 function getOriginDirectory() {
   return "./";
 }
@@ -20,12 +22,38 @@ function getDirectories() {
   return [];
 }
 
-function getFileInfo() {
+function getFileInfo(filename) {
+  const fileData = readFile(filename);
+  const { numLines, numLinesOfCode } = countLines(fileData);
+
   return {
-    path: "./index.js",
-    lines: 10,
-    linesOfCode: 5,
+    path: filename,
+    lines: numLines,
+    linesOfCode: numLinesOfCode,
   };
+}
+
+function readFile(filename) {
+  try {
+    return fs.readFileSync(filename, "utf8");
+  } catch (err) {
+    console.error(`Unable to read file ${filename}`);
+  }
+
+  return null;
+}
+
+function countLines(fileData) {
+  const lines = splitStringByNewlines(fileData);
+  const numLines = lines.length;
+  const linesOfCode = lines.filter((line) => line.trim() !== "");
+  const numLinesOfCode = linesOfCode.length;
+
+  return { numLines, numLinesOfCode };
+}
+
+function splitStringByNewlines(string) {
+  return string.split("\n");
 }
 
 function createResults(directoryInfo) {
