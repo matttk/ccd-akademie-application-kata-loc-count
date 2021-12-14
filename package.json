@@ -1,0 +1,32 @@
+{
+  "name": "ccd-akademie-application-kata-loc-count",
+  "version": "1.0.0",
+  "description": "Application Kata „LOC Count“ from CCD Akademie",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "eslint": "npx eslint .",
+    "eslint:fix": "npx eslint . --fix",
+    "start": "node index.js persons.csv",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "jest": {
+    "transform": {}
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/matttk/ccd-akademie-application-kata-loc-count.git"
+  },
+  "author": "Matthew Kirschnick",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/matttk/ccd-akademie-application-kata-loc-count/issues"
+  },
+  "homepage": "https://github.com/matttk/ccd-akademie-application-kata-loc-count#readme",
+  "devDependencies": {
+    "eslint": "^8.4.1",
+    "eslint-plugin-jest": "^25.3.0",
+    "jest": "^27.4.3",
+    "prettier": "^2.5.1"
+  }
+}
