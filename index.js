@@ -14,8 +14,22 @@ function getDirectoryInfo(originDirectory) {
   return [...filesInfo, ...directoriesInfo];
 }
 
-function getFiles() {
-  return ["./index.js"];
+function getFiles(directory) {
+  let files, codeFiles;
+
+  try {
+    files = fs.readdirSync(directory);
+  } catch (err) {
+    console.error(`Error reading files in directory ${directory}`);
+  }
+
+  if (files) {
+    codeFiles = files.filter((file) => file.indexOf(".js") === file.length - 3);
+  } else {
+    codeFiles = [];
+  }
+
+  return codeFiles.map((file) => `${directory}${file}`);
 }
 
 function getDirectories() {
