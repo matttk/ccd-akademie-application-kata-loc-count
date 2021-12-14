@@ -54,7 +54,7 @@ function getDirectories(directory) {
 }
 
 function formatPath(directory, fileOrSubDirectory) {
-  if (directory === "./") {
+  if (directory.slice(-1) === "/") {
     return `${directory}${fileOrSubDirectory}`;
   }
 
