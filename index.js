@@ -1,7 +1,15 @@
 import fs from "fs";
 
 function getOriginDirectory() {
-  return "./test";
+  const args = process.argv.slice(2);
+  const path = args[0];
+
+  if (!path) {
+    console.error("Missing path.");
+    return null;
+  }
+
+  return path;
 }
 
 function getDirectoryInfo(originDirectory) {
@@ -153,11 +161,14 @@ function displayTotals(info) {
 
 function main() {
   const originDirectory = getOriginDirectory();
-  const directoryInfo = getDirectoryInfo(originDirectory);
-  const results = createResults(directoryInfo);
 
-  displayResults(results);
-  displayTotals(directoryInfo);
+  if (originDirectory) {
+    const directoryInfo = getDirectoryInfo(originDirectory);
+    const results = createResults(directoryInfo);
+
+    displayResults(results);
+    displayTotals(directoryInfo);
+  }
 }
 
 main();
