@@ -1,7 +1,7 @@
 import fs from "fs";
 
 function getOriginDirectory() {
-  return "./";
+  return "./test";
 }
 
 function getDirectoryInfo(originDirectory) {
@@ -9,9 +9,14 @@ function getDirectoryInfo(originDirectory) {
   const directories = getDirectories(originDirectory);
 
   const filesInfo = files.map(getFileInfo);
-  const directoriesInfo = directories.map(getDirectoryInfo);
 
-  return [...filesInfo, ...directoriesInfo];
+  if (directories) {
+    directories.forEach((directory) => {
+      filesInfo.push(...getDirectoryInfo(directory));
+    });
+  }
+
+  return filesInfo;
 }
 
 function getFiles(directory) {
@@ -29,15 +34,61 @@ function getFiles(directory) {
     codeFiles = [];
   }
 
-  return codeFiles.map((file) => `${directory}${file}`);
+  return codeFiles.map((file) => formatPath(directory, file));
 }
 
-function getDirectories() {
-  return [];
+function getDirectories(directory) {
+  let files, subDirectories;
+
+  try {
+    files = fs.readdirSync(directory);
+  } catch (err) {
+    console.error(`Error reading files in directory ${directory}`);
+  }
+
+  if (files) {
+    subDirectories = files.filter((file) =>
+      isDirectory(formatPath(directory, file))
+    );
+  } else {
+    subDirectories = [];
+  }
+
+  return subDirectories.map((subDirectory) =>
+    formatPath(directory, subDirectory)
+  );
+}
+
+function formatPath(directory, fileOrSubDirectory) {
+  if (directory === "./") {
+    return `${directory}${fileOrSubDirectory}`;
+  }
+
+  return `${directory}/${fileOrSubDirectory}`;
+}
+
+function isDirectory(path) {
+  try {
+    const stats = fs.statSync(path);
+    return stats.isDirectory();
+  } catch (err) {
+    console.error(`Error checking if ${path} is directory`);
+  }
+
+  return false;
 }
 
 function getFileInfo(filename) {
   const fileData = readFile(filename);
+
+  if (!fileData) {
+    return {
+      path: filename,
+      lines: 0,
+      linesOfCode: 0,
+    };
+  }
+
   const { numLines, numLinesOfCode } = countLines(fileData);
 
   return {
@@ -86,12 +137,27 @@ function displayResult(result) {
   console.log(result);
 }
 
+function displayTotals(info) {
+  let numLines = 0;
+  let numLinesOfCode = 0;
+
+  info.forEach((result) => {
+    numLines += result.lines;
+    numLinesOfCode += result.linesOfCode;
+  });
+
+  console.log("\nTotal:");
+  console.log(`  Lines: ${numLines}`);
+  console.log(`  LOC  : ${numLinesOfCode}`);
+}
+
 function main() {
   const originDirectory = getOriginDirectory();
   const directoryInfo = getDirectoryInfo(originDirectory);
   const results = createResults(directoryInfo);
 
   displayResults(results);
+  displayTotals(directoryInfo);
 }
 
 main();
